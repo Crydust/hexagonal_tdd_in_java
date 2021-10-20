@@ -10,12 +10,12 @@ public class ValidationError {
     }
 
     @Override
-    public boolean equals(Object o){
-        if (initializedWithNulls()){
+    public boolean equals(Object o) {
+        if (initializedWithNulls()) {
             return false;
         }
 
-        if (o instanceof ValidationError){
+        if (o instanceof ValidationError) {
             return fieldsEqual((ValidationError) o);
         }
 
@@ -28,5 +28,13 @@ public class ValidationError {
 
     private boolean initializedWithNulls() {
         return field == null || errorCode == null;
+    }
+
+    @Override
+    public String toString() {
+        return "ValidationError{" +
+            "field='" + field + '\'' +
+            ", errorCode='" + errorCode + '\'' +
+            '}';
     }
 }

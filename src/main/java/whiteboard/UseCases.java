@@ -8,10 +8,10 @@ public class UseCases {
     }
 
     private static class CreateWhiteboardUseCase {
-        private String name;
-        private CreateWhiteboardObserver gui;
-        private WhiteboardRepo repo;
-        private ArrayList<ValidationError> errors = new ArrayList<>();
+        private final String name;
+        private final CreateWhiteboardObserver gui;
+        private final WhiteboardRepo repo;
+        private final ArrayList<ValidationError> errors = new ArrayList<>();
         private Whiteboard whiteboard;
 
         public CreateWhiteboardUseCase(String name, CreateWhiteboardObserver gui, WhiteboardRepo repo) {
@@ -21,9 +21,9 @@ public class UseCases {
         }
 
         public void execute() {
-            if (nameTaken()){
+            if (nameTaken()) {
                 reportError("name", "unique");
-            } else if (nameNotProvided()){
+            } else if (nameNotProvided()) {
                 reportError("name", "required");
             } else {
                 saveWhiteboard();

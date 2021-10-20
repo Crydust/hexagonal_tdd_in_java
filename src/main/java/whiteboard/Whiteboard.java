@@ -17,7 +17,15 @@ public class Whiteboard {
         return id;
     }
 
-    public void setId(Object id){
+    public void setId(Object id) {
         this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        return "Whiteboard{" +
+            "name='" + name + '\'' +
+            ", id=" + id +
+            '}';
     }
 }

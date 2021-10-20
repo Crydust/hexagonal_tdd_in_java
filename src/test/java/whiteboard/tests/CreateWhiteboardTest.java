@@ -1,6 +1,8 @@
 package whiteboard.tests;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.notNullValue;
 
 import java.util.List;
 
@@ -10,19 +12,19 @@ import whiteboard.CreateWhiteboardObserver;
 import whiteboard.UseCases;
 import whiteboard.ValidationError;
 
-public class CreateWhiteboardTest {
-    CreateWhiteboardObserverSpy spy = new CreateWhiteboardObserverSpy();
-    FakeWhiteboardRepo repo = new FakeWhiteboardRepo();
+class CreateWhiteboardTest {
+    final CreateWhiteboardObserverSpy spy = new CreateWhiteboardObserverSpy();
+    final FakeWhiteboardRepo repo = new FakeWhiteboardRepo();
 
     @Test
-    public void nameIsRequired(){
+    void nameIsRequired() {
         UseCases.createWhiteboard(null, spy, repo);
 
         assertReceivedError("name", "required");
     }
 
     @Test
-    public void nameDupeNotAllowed() {
+    void nameDupeNotAllowed() {
         UseCases.createWhiteboard("whiteboard name", spy, repo);
         UseCases.createWhiteboard("whiteboard name", spy, repo);
 
@@ -30,40 +32,39 @@ public class CreateWhiteboardTest {
     }
 
     @Test
-    public void givenValidName_sendsIdBackToObserver() {
+    void givenValidName_sendsIdBackToObserver() {
         UseCases.createWhiteboard("whiteboard name", spy, repo);
 
-        assertTrue(spy.spyId() != null);
+        assertThat(spy.spyId(), notNullValue());
     }
 
     private void assertReceivedError(String field, String errorCode) {
-        assertTrue(
-            spy.spyValidationErrors().contains(
-                new ValidationError(field, errorCode)
-            )
+        assertThat(
+            spy.spyValidationErrors(),
+            contains(new ValidationError(field, errorCode))
         );
     }
-}
 
-class CreateWhiteboardObserverSpy implements CreateWhiteboardObserver {
-    private List<ValidationError> spyValidationErrors;
-    private Object id;
+    static class CreateWhiteboardObserverSpy implements CreateWhiteboardObserver {
+        private List<ValidationError> spyValidationErrors;
+        private Object id;
 
-    public List<ValidationError> spyValidationErrors() {
-        return spyValidationErrors;
-    }
+        public List<ValidationError> spyValidationErrors() {
+            return spyValidationErrors;
+        }
 
-    @Override
-    public void validationFailed(List<ValidationError> errors) {
-        spyValidationErrors = errors;
-    }
+        @Override
+        public void validationFailed(List<ValidationError> errors) {
+            spyValidationErrors = errors;
+        }
 
-    @Override
-    public void whiteboardCreated(Object id) {
-        this.id = id;
-    }
+        @Override
+        public void whiteboardCreated(Object id) {
+            this.id = id;
+        }
 
-    public Object spyId() {
-        return id;
+        public Object spyId() {
+            return id;
+        }
     }
 }
