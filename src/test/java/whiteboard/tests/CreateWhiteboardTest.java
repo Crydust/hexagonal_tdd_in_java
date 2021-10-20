@@ -1,12 +1,14 @@
 package whiteboard.tests;
 
-import org.junit.Test;
-import whiteboard.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.junit.jupiter.api.Test;
+
+import whiteboard.CreateWhiteboardObserver;
+import whiteboard.UseCases;
+import whiteboard.ValidationError;
 
 public class CreateWhiteboardTest {
     CreateWhiteboardObserverSpy spy = new CreateWhiteboardObserverSpy();
