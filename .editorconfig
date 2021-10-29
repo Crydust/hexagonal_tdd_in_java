@@ -1,7 +1,7 @@
 # EditorConfig is awesome: https://EditorConfig.org
 root = true
 
-[*.{java,xml}]
+[*.{java,xml,html,css,js,jsp,jspf,tag}]
 charset = utf-8
 indent_size = 4
 indent_style = space
