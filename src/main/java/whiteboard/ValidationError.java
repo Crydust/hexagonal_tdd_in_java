@@ -1,12 +1,22 @@
 package whiteboard;
 
-public class ValidationError {
+import java.io.Serializable;
+
+public class ValidationError implements Serializable {
     private final String field;
     private final String errorCode;
 
     public ValidationError(String field, String errorCode) {
         this.field = field;
         this.errorCode = errorCode;
+    }
+
+    public String getField() {
+        return field;
+    }
+
+    public String getErrorCode() {
+        return errorCode;
     }
 
     @Override

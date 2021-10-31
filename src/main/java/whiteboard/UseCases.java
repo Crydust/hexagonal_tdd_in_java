@@ -36,7 +36,7 @@ public class UseCases {
         }
 
         private boolean nameNotProvided() {
-            return name == null;
+            return name == null || name.isBlank();
         }
 
         private boolean nameTaken() {

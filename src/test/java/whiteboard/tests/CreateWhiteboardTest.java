@@ -1,16 +1,16 @@
 package whiteboard.tests;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.notNullValue;
+import org.junit.jupiter.api.Test;
+import whiteboard.CreateWhiteboardObserver;
+import whiteboard.FakeWhiteboardRepo;
+import whiteboard.UseCases;
+import whiteboard.ValidationError;
 
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
-
-import whiteboard.CreateWhiteboardObserver;
-import whiteboard.UseCases;
-import whiteboard.ValidationError;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.notNullValue;
 
 class CreateWhiteboardTest {
     final CreateWhiteboardObserverSpy spy = new CreateWhiteboardObserverSpy();
