@@ -1,10 +1,11 @@
 package whiteboard;
 
 import java.util.ArrayList;
-import java.util.UUID;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class FakeWhiteboardRepo implements WhiteboardRepo {
     private final ArrayList<Whiteboard> whiteboards = new ArrayList<>();
+    private final AtomicLong sequence = new AtomicLong();
 
     @Override
     public Whiteboard findByName(String name) {
@@ -17,6 +18,11 @@ public class FakeWhiteboardRepo implements WhiteboardRepo {
     @Override
     public void save(Whiteboard whiteboard) {
         whiteboards.add(whiteboard);
-        whiteboard.setId(UUID.randomUUID().toString());
+        whiteboard.setId(sequence.incrementAndGet());
+    }
+
+    @Override
+    public void deleteAll() {
+        whiteboards.clear();
     }
 }

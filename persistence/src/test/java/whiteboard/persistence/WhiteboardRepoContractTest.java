@@ -1,11 +1,12 @@
-package whiteboard.tests;
+package whiteboard.persistence;
 
+import org.hamcrest.MatcherAssert;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import whiteboard.Whiteboard;
 import whiteboard.WhiteboardRepo;
 
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -23,19 +24,24 @@ abstract class WhiteboardRepoContractTest {
         repo.save(sf);
     }
 
+    @AfterEach
+    void tearDown() {
+        repo.deleteAll();
+    }
+
     protected abstract void createRepo();
 
     @Test
     void findsByName() {
-        assertThat(ny, is(repo.findByName(ny.getName())));
-        assertThat(sf, is(repo.findByName(sf.getName())));
+        MatcherAssert.assertThat(ny, is(repo.findByName(ny.getName())));
+        MatcherAssert.assertThat(sf, is(repo.findByName(sf.getName())));
     }
 
     @Test
     void createsUniqueId() {
-        assertThat(ny.getId(), notNullValue());
-        assertThat(sf.getId(), notNullValue());
-        assertThat(ny.getId(), not(equalTo(sf.getId())));
+        MatcherAssert.assertThat(ny.getId(), notNullValue());
+        MatcherAssert.assertThat(sf.getId(), notNullValue());
+        MatcherAssert.assertThat(ny.getId(), not(equalTo(sf.getId())));
     }
 }
 
