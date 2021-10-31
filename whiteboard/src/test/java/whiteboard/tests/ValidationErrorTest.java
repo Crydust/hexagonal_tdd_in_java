@@ -12,13 +12,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ValidationErrorTest {
-    @Test
-    void nullFieldsEqualNothing() {
-        ValidationError nullError = new ValidationError(null, null);
-        ValidationError otherNullError = new ValidationError(null, null);
-
-        assertThat(nullError, not(equalTo(otherNullError)));
-    }
 
     @Test
     void givenRandomObject_EqualsFalse() {
