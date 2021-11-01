@@ -12,7 +12,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 
-abstract class WhiteboardRepoContractTest {
+abstract class WhiteboardRepoContract {
     final Whiteboard ny = new Whiteboard("NY", null);
     final Whiteboard sf = new Whiteboard("SF", null);
     protected WhiteboardRepo repo;
