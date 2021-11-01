@@ -10,6 +10,7 @@ import whiteboard.ValidationError;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import static whiteboard.boilerplate.NihServletUtil.readRedirectAttributes;
 import static whiteboard.boilerplate.NihServletUtil.redirect;
@@ -36,14 +37,32 @@ public class WhiteboardsServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) {
+        doGetOrPost(request, response);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
+        doGetOrPost(request, response);
+    }
+
+    private void doGetOrPost(HttpServletRequest request, HttpServletResponse response) {
         try {
             readRedirectAttributes(request).forEach(request::setAttribute);
             switch (request.getServletPath()) {
                 case NEW_URL -> renderJsp(request, response, NEW_JSP);
+                case CREATE_URL -> {
+                    final String name = request.getParameter("name");
+                    final Gui gui = new Gui();
+                    UseCases.createWhiteboard(name, gui, WHITEBOARD_REPO);
+                    gui.then(
+                        id -> redirect(request, response, CREATED_URL, Map.of("id", String.valueOf(id), "name", name)),
+                        errors -> redirect(request, response, VALIDATION_FAILED_URL, Map.of("errors", errors, "name", name))
+                    );
+                }
                 case VALIDATION_FAILED_URL -> renderJsp(request, response, VALIDATION_FAILED_JSP);
                 case CREATED_URL -> renderJsp(request, response, CREATED_JSP, Map.of(
-                    "whiteboard", WHITEBOARD_REPO.findByName(
-                        String.valueOf(request.getAttribute("name")))));
+                    "whiteboard", WHITEBOARD_REPO.findByName(String.valueOf(request.getAttribute("name")))
+                ));
                 default -> renderText(response, "not implemented");
             }
         } catch (Exception e) {
@@ -52,38 +71,21 @@ public class WhiteboardsServlet extends HttpServlet {
         }
     }
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
-        try {
-            if (CREATE_URL.equals(request.getServletPath())) {
-                final String name = request.getParameter("name");
-                UseCases.createWhiteboard(name, new Gui(request, response, name), WHITEBOARD_REPO);
-            } else {
-                renderText(response, "not implemented");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            renderText(response, "error");
-        }
-    }
-
-    private record Gui(
-        HttpServletRequest request,
-        HttpServletResponse response,
-        String name
-    ) implements CreateWhiteboardObserver {
+    private static final class Gui implements CreateWhiteboardObserver {
+        private Result<Long, List<ValidationError>> result = Result.fail(List.of());
 
         @Override
         public void validationFailed(List<ValidationError> errors) {
-            redirect(request, response, VALIDATION_FAILED_URL, Map.of("errors", errors, "name", name));
+            result = Result.fail(errors);
         }
 
         @Override
-        public void whiteboardCreated(Object id) {
-            redirect(request, response, CREATED_URL, Map.of(
-                "id", String.valueOf(id),
-                "name", name
-            ));
+        public void whiteboardCreated(Long id) {
+            result = Result.success(id);
+        }
+
+        public void then(Consumer<Long> successConsumer, Consumer<List<ValidationError>> failureConsumer) {
+            result.then(successConsumer, failureConsumer);
         }
     }
 

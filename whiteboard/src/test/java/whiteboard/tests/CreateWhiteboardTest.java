@@ -59,7 +59,7 @@ class CreateWhiteboardTest {
         }
 
         @Override
-        public void whiteboardCreated(Object id) {
+        public void whiteboardCreated(Long id) {
             this.id = id;
         }
 
