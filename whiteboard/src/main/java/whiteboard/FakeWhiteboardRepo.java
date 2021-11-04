@@ -8,6 +8,14 @@ public class FakeWhiteboardRepo implements WhiteboardRepo {
     private final AtomicLong sequence = new AtomicLong();
 
     @Override
+    public Whiteboard findById(Long id) {
+        return whiteboards.stream()
+            .filter(w -> w.getId().equals(id))
+            .findFirst()
+            .orElse(null);
+    }
+
+    @Override
     public Whiteboard findByName(String name) {
         return whiteboards.stream()
             .filter(w -> w.getName().equals(name))

@@ -75,6 +75,32 @@ public class JdbcWhiteboardRepo implements WhiteboardRepo {
     }
 
     @Override
+    public Whiteboard findById(Long id) {
+        if (id == null) {
+            return null;
+        }
+        try (var con = establishConnection();
+             var ps = con.prepareStatement("select id, name from whiteboard_records where id = ?")) {
+            ps.setQueryTimeout(10);
+            ps.setLong(1, id);
+            try (var rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new Whiteboard(
+                        rs.getString("name"),
+                        rs.getLong("id")
+                    );
+                }
+                if (rs.next()) {
+                    throw new RuntimeException("ambiguous?");
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
+    @Override
     public Whiteboard findByName(String name) {
         try (var con = establishConnection();
              var ps = con.prepareStatement("select id, name from whiteboard_records where name = ?")) {
@@ -91,7 +117,6 @@ public class JdbcWhiteboardRepo implements WhiteboardRepo {
                     throw new RuntimeException("ambiguous?");
                 }
             }
-
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

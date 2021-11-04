@@ -32,6 +32,12 @@ abstract class WhiteboardRepoContract {
     protected abstract void createRepo();
 
     @Test
+    void findsById() {
+        MatcherAssert.assertThat(ny, is(repo.findById(ny.getId())));
+        MatcherAssert.assertThat(sf, is(repo.findById(sf.getId())));
+    }
+
+    @Test
     void findsByName() {
         MatcherAssert.assertThat(ny, is(repo.findByName(ny.getName())));
         MatcherAssert.assertThat(sf, is(repo.findByName(sf.getName())));
