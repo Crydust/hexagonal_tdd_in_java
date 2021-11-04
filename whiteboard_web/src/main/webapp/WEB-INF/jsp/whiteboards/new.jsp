@@ -7,6 +7,7 @@
 <head>
     <title>/whiteboards/new</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <x:break-bfcache/>
 </head>
 <body>
 <h1>/whiteboards/new</h1>
