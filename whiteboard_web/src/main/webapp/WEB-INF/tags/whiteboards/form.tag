@@ -10,7 +10,7 @@
 <c:url var="action" value="/whiteboards/create"/>
 <form action="${fn:escapeXml(action)}" method="post">
     <label for="name">Name</label>
-    <input type="text" id="name" name="name" value="${fn:escapeXml(name)}"/>
+    <input type="text" id="name" name="name" value="${fn:escapeXml(name)}" autofocus="autofocus"/>
     <br/>
     <button type="submit">Save changes</button>
 </form>
