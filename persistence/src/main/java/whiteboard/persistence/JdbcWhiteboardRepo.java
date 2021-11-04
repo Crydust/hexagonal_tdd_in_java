@@ -16,8 +16,6 @@ import java.util.concurrent.TimeUnit;
 
 public class JdbcWhiteboardRepo implements WhiteboardRepo {
 
-    private static final ResultSetMapper<Whiteboard> RESULT_SET_TO_WHITEBOARD = rs -> new Whiteboard(rs.getString("name"), rs.getLong("id"));
-
     private static volatile boolean initialized = false;
     private static final Semaphore initializing = new Semaphore(1, false);
     private static final CountDownLatch initDone = new CountDownLatch(1);
@@ -85,8 +83,8 @@ public class JdbcWhiteboardRepo implements WhiteboardRepo {
         }
         return findOne(
             "select id, name from whiteboard_records where id = ?",
-            ps -> ps.setLong(1, id),
-            RESULT_SET_TO_WHITEBOARD);
+            ps -> ps.setLong(1, id)
+        );
     }
 
     @Override
@@ -96,11 +94,11 @@ public class JdbcWhiteboardRepo implements WhiteboardRepo {
         }
         return findOne(
             "select id, name from whiteboard_records where name = ?",
-            ps -> ps.setString(1, name),
-            RESULT_SET_TO_WHITEBOARD);
+            ps -> ps.setString(1, name)
+        );
     }
 
-    private <T> T findOne(String sql, PreparedStatementParameterSetter paramSetter, ResultSetMapper<T> mapper) {
+    private Whiteboard findOne(String sql, PreparedStatementParameterSetter paramSetter) {
         try (var con = establishConnection();
              var ps = con.prepareStatement(sql)) {
             ps.setFetchSize(1);
@@ -108,7 +106,9 @@ public class JdbcWhiteboardRepo implements WhiteboardRepo {
             paramSetter.accept(ps);
             try (var rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return mapper.apply(rs);
+                    return new Whiteboard(
+                        rs.getString("name"),
+                        rs.getLong("id"));
                 }
             }
         } catch (SQLException e) {
