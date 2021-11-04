@@ -16,6 +16,7 @@ import static whiteboard.boilerplate.NihServletUtil.readRedirectAttributes;
 import static whiteboard.boilerplate.NihServletUtil.redirect;
 import static whiteboard.boilerplate.NihServletUtil.renderJsp;
 import static whiteboard.boilerplate.NihServletUtil.renderText;
+import static whiteboard.boilerplate.NihStringUtil.addAttributeToQuery;
 import static whiteboard.servlets.Configuration.WHITEBOARD_REPO;
 
 @WebServlet(name = "WhiteboardsServlet", urlPatterns = {
@@ -55,13 +56,13 @@ public class WhiteboardsServlet extends HttpServlet {
                     final Gui gui = new Gui();
                     UseCases.createWhiteboard(name, gui, WHITEBOARD_REPO);
                     gui.then(
-                        id -> redirect(request, response, CREATED_URL, Map.of("id", String.valueOf(id), "name", name)),
+                        id -> redirect(request, response, addAttributeToQuery(CREATED_URL, "id", String.valueOf(id))),
                         errors -> redirect(request, response, VALIDATION_FAILED_URL, Map.of("errors", errors, "name", name))
                     );
                 }
                 case VALIDATION_FAILED_URL -> renderJsp(request, response, VALIDATION_FAILED_JSP);
                 case CREATED_URL -> renderJsp(request, response, CREATED_JSP, Map.of(
-                    "whiteboard", WHITEBOARD_REPO.findByName(String.valueOf(request.getAttribute("name")))
+                    "whiteboard", WHITEBOARD_REPO.findById(Long.valueOf(request.getParameter("id")))
                 ));
                 default -> renderText(response, "not implemented");
             }
