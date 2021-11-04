@@ -5,6 +5,8 @@ import whiteboard.WhiteboardRepo;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
@@ -13,6 +15,8 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 public class JdbcWhiteboardRepo implements WhiteboardRepo {
+
+    private static final ResultSetMapper<Whiteboard> RESULT_SET_TO_WHITEBOARD = rs -> new Whiteboard(rs.getString("name"), rs.getLong("id"));
 
     private static volatile boolean initialized = false;
     private static final Semaphore initializing = new Semaphore(1, false);
@@ -79,19 +83,32 @@ public class JdbcWhiteboardRepo implements WhiteboardRepo {
         if (id == null) {
             return null;
         }
+        return findOne(
+            "select id, name from whiteboard_records where id = ?",
+            ps -> ps.setLong(1, id),
+            RESULT_SET_TO_WHITEBOARD);
+    }
+
+    @Override
+    public Whiteboard findByName(String name) {
+        if (name == null) {
+            return null;
+        }
+        return findOne(
+            "select id, name from whiteboard_records where name = ?",
+            ps -> ps.setString(1, name),
+            RESULT_SET_TO_WHITEBOARD);
+    }
+
+    private <T> T findOne(String sql, PreparedStatementParameterSetter paramSetter, ResultSetMapper<T> mapper) {
         try (var con = establishConnection();
-             var ps = con.prepareStatement("select id, name from whiteboard_records where id = ?")) {
+             var ps = con.prepareStatement(sql)) {
+            ps.setFetchSize(1);
             ps.setQueryTimeout(10);
-            ps.setLong(1, id);
+            paramSetter.accept(ps);
             try (var rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return new Whiteboard(
-                        rs.getString("name"),
-                        rs.getLong("id")
-                    );
-                }
-                if (rs.next()) {
-                    throw new RuntimeException("ambiguous?");
+                    return mapper.apply(rs);
                 }
             }
         } catch (SQLException e) {
@@ -100,27 +117,14 @@ public class JdbcWhiteboardRepo implements WhiteboardRepo {
         return null;
     }
 
-    @Override
-    public Whiteboard findByName(String name) {
-        try (var con = establishConnection();
-             var ps = con.prepareStatement("select id, name from whiteboard_records where name = ?")) {
-            ps.setQueryTimeout(10);
-            ps.setString(1, name);
-            try (var rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return new Whiteboard(
-                        rs.getString("name"),
-                        rs.getLong("id")
-                    );
-                }
-                if (rs.next()) {
-                    throw new RuntimeException("ambiguous?");
-                }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return null;
+    @FunctionalInterface
+    private interface PreparedStatementParameterSetter {
+        void accept(PreparedStatement ps) throws SQLException;
+    }
+
+    @FunctionalInterface
+    private interface ResultSetMapper<T> {
+        T apply(ResultSet ps) throws SQLException;
     }
 
     @Override
