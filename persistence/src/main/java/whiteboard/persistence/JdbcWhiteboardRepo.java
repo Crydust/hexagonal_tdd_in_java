@@ -1,10 +1,11 @@
 package whiteboard.persistence;
 
+import org.h2.jdbcx.JdbcDataSource;
 import whiteboard.Whiteboard;
 import whiteboard.WhiteboardRepo;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -20,17 +21,23 @@ public class JdbcWhiteboardRepo implements WhiteboardRepo {
     private static final Semaphore initializing = new Semaphore(1, false);
     private static final CountDownLatch initDone = new CountDownLatch(1);
     private static final List<Migration> migrations = List.of(new CreateWhiteboardRecordTable());
-    private final String url;
+    private final DataSource ds;
 
     public JdbcWhiteboardRepo() {
-        url = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1";
+        this.ds = createDataSource("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
+    }
+
+    private static DataSource createDataSource(String url) {
+        JdbcDataSource ds = new JdbcDataSource();
+        ds.setURL(url);
+        return ds;
     }
 
     private Connection establishConnection() {
         // TODO use connection pool
         // TODO connection string should be configurable
         try {
-            final Connection connection = DriverManager.getConnection(url);
+            final Connection connection = ds.getConnection();
             initializeDatabase(connection);
             return connection;
         } catch (SQLException e) {
