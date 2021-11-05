@@ -3,10 +3,11 @@ package whiteboard.persistence;
 import org.h2.jdbcx.JdbcDataSource;
 import whiteboard.Whiteboard;
 import whiteboard.WhiteboardRepo;
+import whiteboard.persistence.util.Repository.GeneratedKey;
+import whiteboard.persistence.util.SqlWithParameters;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -14,6 +15,9 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
+
+import static whiteboard.persistence.util.Repository.executeUpdate;
+import static whiteboard.persistence.util.Repository.sqlToOptional;
 
 public class JdbcWhiteboardRepo implements WhiteboardRepo {
 
@@ -28,18 +32,13 @@ public class JdbcWhiteboardRepo implements WhiteboardRepo {
     }
 
     private static DataSource createDataSource(String url) {
-        JdbcDataSource ds = new JdbcDataSource();
-        ds.setURL(url);
-        return ds;
-    }
-
-    private Connection establishConnection() {
         // TODO use connection pool
         // TODO connection string should be configurable
         try {
-            final Connection connection = ds.getConnection();
-            initializeDatabase(connection);
-            return connection;
+            JdbcDataSource ds = new JdbcDataSource();
+            ds.setURL(url);
+            initializeDatabase(ds.getConnection());
+            return ds;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } catch (InterruptedException e) {
@@ -88,10 +87,12 @@ public class JdbcWhiteboardRepo implements WhiteboardRepo {
         if (id == null) {
             return null;
         }
-        return findOne(
-            "select id, name from whiteboard_records where id = ?",
-            ps -> ps.setLong(1, id)
-        );
+        return sqlToOptional(
+            ds,
+            new SqlWithParameters("select id, name from whiteboard_records where id = ?")
+                .setLong(1, id),
+            JdbcWhiteboardRepo::map
+        ).orElse(null);
     }
 
     @Override
@@ -99,76 +100,37 @@ public class JdbcWhiteboardRepo implements WhiteboardRepo {
         if (name == null) {
             return null;
         }
-        return findOne(
-            "select id, name from whiteboard_records where name = ?",
-            ps -> ps.setString(1, name)
-        );
+        return sqlToOptional(
+            ds,
+            new SqlWithParameters("select id, name from whiteboard_records where name = ?")
+                .setString(1, name),
+            JdbcWhiteboardRepo::map
+        ).orElse(null);
     }
 
-    private Whiteboard findOne(String sql, PreparedStatementParameterSetter paramSetter) {
-        try (var con = establishConnection();
-             var ps = con.prepareStatement(sql)) {
-            ps.setFetchSize(1);
-            ps.setQueryTimeout(10);
-            paramSetter.accept(ps);
-            try (var rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return new Whiteboard(
-                        rs.getString("name"),
-                        rs.getLong("id"));
-                }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return null;
-    }
-
-    @FunctionalInterface
-    private interface PreparedStatementParameterSetter {
-        void accept(PreparedStatement ps) throws SQLException;
-    }
-
-    @FunctionalInterface
-    private interface ResultSetMapper<T> {
-        T apply(ResultSet ps) throws SQLException;
+    private static Whiteboard map(ResultSet rs) throws SQLException {
+        return new Whiteboard(
+            rs.getString("name"),
+            rs.getLong("id"));
     }
 
     @Override
     public void save(Whiteboard whiteboard) {
-        try (var con = establishConnection();
-             var ps = con.prepareStatement(
-                 "insert into whiteboard_records (id, name) values (next value for whiteboard_seq, ?)",
-                 new String[]{"id"}
-             )) {
-            ps.setQueryTimeout(10);
-            ps.setString(1, whiteboard.getName());
-            final int count = ps.executeUpdate();
-            if (count == 1) {
-                // success
-                try (var generatedKeys = ps.getGeneratedKeys()) {
-                    if (generatedKeys.next()) {
-                        whiteboard.setId(generatedKeys.getLong("id"));
-                    } else {
-                        throw new RuntimeException("no generated keys?");
-                    }
-                }
-            } else {
-                throw new RuntimeException("count was not 1?");
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        final GeneratedKey generatedKey = new GeneratedKey("id");
+        executeUpdate(
+            ds,
+            new SqlWithParameters("insert into whiteboard_records (id, name) values (next value for whiteboard_seq, ?)")
+                .setString(1, whiteboard.getName()),
+            generatedKey
+        );
+        whiteboard.setId(generatedKey.getColumnValue());
     }
 
     @Override
     public void deleteAll() {
-        try (var con = establishConnection();
-             var st = con.createStatement()) {
-            st.setQueryTimeout(10);
-            st.execute("truncate table whiteboard_records");
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        executeUpdate(
+            ds,
+            new SqlWithParameters("truncate table whiteboard_records")
+        );
     }
 }

@@ -10,9 +10,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
-import static whiteboard.persistence.util.FetchSize.HUNDRED_ROWS_FETCH_SIZE;
-import static whiteboard.persistence.util.FetchSize.ONE_ROW_FETCH_SIZE;
-import static whiteboard.persistence.util.QueryTimeout.DEFAULT_QUERY_TIMEOUT;
 
 public final class Repository {
 
@@ -20,57 +17,22 @@ public final class Repository {
         throw new UnsupportedOperationException("this class is not supposed to be instantiated");
     }
 
-//    public static DataSource lookupDataSource() throws RepositoryException {
-//        final String contextName = "java:comp/env";
-//        final String datasourceName = "jdbc/MyDataSource";
-//        try {
-//            final Context ctx = (Context) new InitialContext().lookup(contextName);
-//            return (DataSource) ctx.lookup(datasourceName);
-//        } catch (NamingException e) {
-//            throw new RepositoryException("Could not find DataSource '" + datasourceName + "' in context '" + contextName + "'", e);
-//        }
-//    }
-
     public static <T> Optional<T> sqlToOptional(DataSource ds, SqlWithParameters sqlWithParameters, ResultSetMapper<T> resultSetMapper) throws RepositoryException {
-        try {
-            final List<T> list = sqlToList(ds, sqlWithParameters.getSql(), sqlWithParameters, resultSetMapper, new QueryTimeout(sqlWithParameters.getQueryTimeout()), new FetchSize(sqlWithParameters.getFetchSize()));
-            return list.isEmpty() ? Optional.empty() : Optional.ofNullable(list.get(0));
-        } catch (SQLException e) {
-            throw new RepositoryException(e);
-        }
-    }
-
-    private static <T> Optional<T> sqlToOptional(DataSource ds, String sql, ParameterSetter parameterSetter, ResultSetMapper<T> resultSetMapper) throws RepositoryException {
-        final List<T> list = sqlToList(ds, sql, parameterSetter, resultSetMapper, DEFAULT_QUERY_TIMEOUT, ONE_ROW_FETCH_SIZE);
+        final List<T> list = sqlToList(ds, sqlWithParameters, resultSetMapper);
         return list.isEmpty() ? Optional.empty() : Optional.ofNullable(list.get(0));
     }
 
-    public static <T> List<T> sqlToList(DataSource ds, SqlWithParameters sqlWithParameters, ResultSetMapper<T> resultSetMapper) throws RepositoryException {
-        try {
-            return sqlToList(ds, sqlWithParameters.getSql(), sqlWithParameters, resultSetMapper, new QueryTimeout(sqlWithParameters.getQueryTimeout()), new FetchSize(sqlWithParameters.getFetchSize()));
-        } catch (SQLException e) {
-            throw new RepositoryException(e);
-        }
-    }
-
-    private static <T> List<T> sqlToList(DataSource ds, String sql, ParameterSetter parameterSetter, ResultSetMapper<T> resultSetMapper) throws RepositoryException {
-        return sqlToList(ds, sql, parameterSetter, resultSetMapper, DEFAULT_QUERY_TIMEOUT, HUNDRED_ROWS_FETCH_SIZE);
-    }
-
-    private static <T> List<T> sqlToList(DataSource ds, String sql, ParameterSetter parameterSetter, ResultSetMapper<T> resultSetMapper, QueryTimeout queryTimeout, FetchSize fetchSize) throws RepositoryException {
+    private static <T> List<T> sqlToList(DataSource ds, SqlWithParameters sql, ResultSetMapper<T> resultSetMapper) throws RepositoryException {
         requireNonNull(ds, "ds");
         requireNonNull(sql, "sql");
-        requireNonNull(parameterSetter, "parameterSetter");
         requireNonNull(resultSetMapper, "resultSetMapper");
-        requireNonNull(queryTimeout, "queryTimeout");
-        requireNonNull(fetchSize, "fetchSize");
         final List<T> list = new ArrayList<>();
         try (final Connection con = ds.getConnection()) {
             con.setReadOnly(true);
-            try (final PreparedStatement ps = con.prepareStatement(sql)) {
-                ps.setQueryTimeout(queryTimeout.getSeconds());
-                ps.setFetchSize(fetchSize.getRows());
-                parameterSetter.accept(ps);
+            try (final PreparedStatement ps = con.prepareStatement(sql.getSql())) {
+                ps.setQueryTimeout(sql.getQueryTimeout());
+                ps.setFetchSize(sql.getFetchSize());
+                sql.accept(ps);
                 try (final ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
                         list.add(resultSetMapper.map(rs));
@@ -78,31 +40,33 @@ public final class Repository {
                 }
             }
         } catch (SQLException e) {
-            final String sqlOnOneLine = sql.replaceAll("[\r\n]+", " ");
-            throw new RepositoryException("Could not execute query '" + sqlOnOneLine + "'", e);
+            throw new RepositoryException("Could not execute query '" + sql + "'", e);
         }
         return list;
     }
 
-    public static int executeUpdate(DataSource ds, String sql, ParameterSetter parameterSetter) throws RepositoryException {
-        return executeUpdate(ds, sql, parameterSetter, DEFAULT_QUERY_TIMEOUT);
+    public static int executeUpdate(DataSource ds, SqlWithParameters sql) throws RepositoryException {
+        return executeUpdate(ds, sql, null);
     }
 
-    private static int executeUpdate(DataSource ds, String sql, ParameterSetter parameterSetter, QueryTimeout queryTimeout) throws RepositoryException {
+    public static int executeUpdate(DataSource ds, SqlWithParameters sql, GeneratedKey generatedKey) throws RepositoryException {
         requireNonNull(ds, "ds");
         requireNonNull(sql, "sql");
-        requireNonNull(parameterSetter, "parameterSetter");
-        requireNonNull(queryTimeout, "queryTimeout");
         try (final Connection con = ds.getConnection()) {
             con.setReadOnly(false);
-            try (final PreparedStatement ps = con.prepareStatement(sql)) {
-                ps.setQueryTimeout(queryTimeout.getSeconds());
-                parameterSetter.accept(ps);
-                return ps.executeUpdate();
+            try (final PreparedStatement ps = generatedKey == null
+                ? con.prepareStatement(sql.getSql())
+                : con.prepareStatement(sql.getSql(), generatedKey.getColumnNames())) {
+                ps.setQueryTimeout(sql.getQueryTimeout());
+                sql.accept(ps);
+                final int rowCount = ps.executeUpdate();
+                if (rowCount == 1 && generatedKey != null) {
+                    generatedKey.read(ps);
+                }
+                return rowCount;
             }
         } catch (SQLException e) {
-            final String sqlOnOneLine = sql.replaceAll("[\r\n]+", " ");
-            throw new RepositoryException("Could not execute update '" + sqlOnOneLine + "'", e);
+            throw new RepositoryException("Could not execute update '" + sql + "'", e);
         }
     }
 
@@ -114,6 +78,33 @@ public final class Repository {
     @FunctionalInterface
     public interface ResultSetMapper<T> {
         T map(ResultSet rs) throws SQLException;
+    }
+
+    public static class GeneratedKey {
+        private final String columnName;
+        private Long columnValue = null;
+
+        public GeneratedKey(String columnName) {
+            this.columnName = columnName;
+        }
+
+        public String[] getColumnNames() {
+            return new String[]{columnName};
+        }
+
+        public Long getColumnValue() {
+            return columnValue;
+        }
+
+        public void read(PreparedStatement ps) throws SQLException {
+            try (var generatedKeys = ps.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    columnValue = generatedKeys.getLong(columnName);
+                } else {
+                    throw new RepositoryException("no generated keys?");
+                }
+            }
+        }
     }
 
     public static class RepositoryException extends RuntimeException {
@@ -137,4 +128,6 @@ public final class Repository {
             super(message, cause, enableSuppression, writableStackTrace);
         }
     }
+
+
 }
