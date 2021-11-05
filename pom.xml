@@ -9,6 +9,7 @@
         <module>whiteboard</module>
         <module>whiteboard_web</module>
         <module>persistence</module>
+        <module>util</module>
     </modules>
     <packaging>pom</packaging>
     <properties>

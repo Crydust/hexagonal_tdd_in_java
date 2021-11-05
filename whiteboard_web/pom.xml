@@ -29,6 +29,11 @@
             <version>1.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
+            <groupId>com.mycompany</groupId>
+            <artifactId>util</artifactId>
+            <version>1.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
             <version>5.0.0</version>

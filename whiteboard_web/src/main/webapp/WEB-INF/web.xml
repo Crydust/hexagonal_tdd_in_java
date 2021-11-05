@@ -6,15 +6,15 @@
     version="5.0">
     <filter>
         <filter-name>NihCharacterEncodingFilter</filter-name>
-        <filter-class>whiteboard.boilerplate.NihCharacterEncodingFilter</filter-class>
+        <filter-class>whiteboard.util.NihCharacterEncodingFilter</filter-class>
     </filter>
     <filter>
         <filter-name>NihSecurityHeadersFilter</filter-name>
-        <filter-class>whiteboard.boilerplate.NihSecurityHeadersFilter</filter-class>
+        <filter-class>whiteboard.util.NihSecurityHeadersFilter</filter-class>
     </filter>
     <filter>
         <filter-name>NihCsrfFilter</filter-name>
-        <filter-class>whiteboard.boilerplate.NihCsrfFilter</filter-class>
+        <filter-class>whiteboard.util.NihCsrfFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>NihCharacterEncodingFilter</filter-name>

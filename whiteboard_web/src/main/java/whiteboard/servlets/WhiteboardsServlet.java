@@ -12,12 +12,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import static whiteboard.boilerplate.NihServletUtil.readRedirectAttributes;
-import static whiteboard.boilerplate.NihServletUtil.redirect;
-import static whiteboard.boilerplate.NihServletUtil.renderJsp;
-import static whiteboard.boilerplate.NihServletUtil.renderText;
-import static whiteboard.boilerplate.NihStringUtil.addAttributeToQuery;
 import static whiteboard.servlets.Configuration.WHITEBOARD_REPO;
+import static whiteboard.util.NihServletUtil.readRedirectAttributes;
+import static whiteboard.util.NihServletUtil.redirect;
+import static whiteboard.util.NihServletUtil.renderJsp;
+import static whiteboard.util.NihServletUtil.renderText;
+import static whiteboard.util.NihStringUtil.addAttributeToQuery;
 
 @WebServlet(name = "WhiteboardsServlet", urlPatterns = {
     WhiteboardsServlet.NEW_URL,
