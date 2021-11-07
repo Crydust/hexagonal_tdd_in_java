@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app
+    xmlns="https://jakarta.ee/xml/ns/jakartaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd"
+    version="5.0">
+    <filter>
+        <filter-name>NihCharacterEncodingFilter</filter-name>
+        <filter-class>whiteboard.util.web.NihCharacterEncodingFilter</filter-class>
+    </filter>
+    <filter>
+        <filter-name>NihSecurityHeadersFilter</filter-name>
+        <filter-class>whiteboard.util.web.NihSecurityHeadersFilter</filter-class>
+    </filter>
+    <filter>
+        <filter-name>NihCsrfFilter</filter-name>
+        <filter-class>whiteboard.util.web.NihCsrfFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>NihCharacterEncodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>NihSecurityHeadersFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>NihCsrfFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <session-config>
+        <session-timeout>30</session-timeout>
+        <cookie-config>
+            <http-only>true</http-only>
+        </cookie-config>
+        <tracking-mode>COOKIE</tracking-mode>
+    </session-config>
+    <jsp-config>
+        <jsp-property-group>
+            <url-pattern>*.jsp</url-pattern>
+            <scripting-invalid>true</scripting-invalid>
+            <trim-directive-whitespaces>true</trim-directive-whitespaces>
+        </jsp-property-group>
+    </jsp-config>
+    <error-page>
+        <location>/WEB-INF/jsp/error.jsp</location>
+    </error-page>
+    <welcome-file-list>
+        <welcome-file>/WEB-INF/jsp/index.jsp</welcome-file>
+    </welcome-file-list>
+</web-app>

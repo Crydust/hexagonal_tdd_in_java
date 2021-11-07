@@ -7,9 +7,10 @@
     <version>1.0.1-SNAPSHOT</version>
     <modules>
         <module>whiteboard</module>
-        <module>whiteboard_web</module>
+        <module>whiteboard-web</module>
         <module>persistence</module>
-        <module>util</module>
+        <module>persistence-util</module>
+        <module>web-util</module>
     </modules>
     <packaging>pom</packaging>
     <properties>
@@ -37,7 +38,7 @@
                     </configuration>
                     <deployables>
                         <deployable>
-                            <location>${project.basedir}/whiteboard_web/target/whiteboard_web-${project.version}.war
+                            <location>${project.basedir}/whiteboard-web/target/whiteboard-web-${project.version}.war
                             </location>
                             <type>war</type>
                         </deployable>

@@ -10,7 +10,6 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>persistence</artifactId>
     <version>1.0.1-SNAPSHOT</version>
-    <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -22,6 +21,11 @@
         <dependency>
             <groupId>com.mycompany</groupId>
             <artifactId>whiteboard</artifactId>
+            <version>1.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.mycompany</groupId>
+            <artifactId>persistence-util</artifactId>
             <version>1.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>

@@ -1,10 +1,10 @@
 package whiteboard.persistence;
 
 import org.h2.jdbcx.JdbcDataSource;
+import whiteboard.util.persistence.Repository.GeneratedKey;
+import whiteboard.util.persistence.SqlWithParameters;
 import whiteboard.Whiteboard;
 import whiteboard.WhiteboardRepo;
-import whiteboard.persistence.util.Repository.GeneratedKey;
-import whiteboard.persistence.util.SqlWithParameters;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -16,8 +16,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
-import static whiteboard.persistence.util.Repository.executeUpdate;
-import static whiteboard.persistence.util.Repository.sqlToOptional;
+import static whiteboard.util.persistence.Repository.executeUpdate;
+import static whiteboard.util.persistence.Repository.sqlToOptional;
 
 public class JdbcWhiteboardRepo implements WhiteboardRepo {
 
@@ -77,7 +77,7 @@ public class JdbcWhiteboardRepo implements WhiteboardRepo {
             try (final Statement st = con.createStatement()) {
                 st.setQueryTimeout(10);
                 st.execute("create sequence whiteboard_seq");
-                st.execute("create table whiteboard_records (id long primary key, name varchar(255) default '' unique)");
+                st.execute("create table whiteboard_records (id long primary key, name varchar(255) not null unique)");
             }
         }
     }
