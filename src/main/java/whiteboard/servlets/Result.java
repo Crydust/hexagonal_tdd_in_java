@@ -14,11 +14,11 @@ public final class Result<S, F> {
     }
 
     public static <S, F> Result<S, F> success(S success) {
-        return new Result<S, F>(success, null, true);
+        return new Result<>(success, null, true);
     }
 
     public static <S, F> Result<S, F> fail(F failure) {
-        return new Result<S, F>(null, failure, false);
+        return new Result<>(null, failure, false);
     }
 
     public void then(Consumer<S> successConsumer, Consumer<F> failureConsumer) {

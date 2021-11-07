@@ -146,7 +146,7 @@ public class SqlWithParameters implements Repository.ParameterSetter {
     }
 
     public int getQueryTimeout() throws SQLException {
-        return queryTimeout.getSeconds();
+        return queryTimeout.seconds();
     }
 
     public SqlWithParameters setQueryTimeout(int seconds) {
@@ -160,7 +160,7 @@ public class SqlWithParameters implements Repository.ParameterSetter {
     }
 
     public int getFetchSize() throws SQLException {
-        return fetchSize.getRows();
+        return fetchSize.rows();
     }
 
     public String getSql() {
@@ -178,51 +178,20 @@ public class SqlWithParameters implements Repository.ParameterSetter {
                 ps.setNull(parameter.index, parameter.type.getVendorTypeNumber());
             } else {
                 switch (parameter.type) {
-                    case TINYINT:
-                        ps.setByte(parameter.index, (byte) parameter.value);
-                        break;
-                    case SMALLINT:
-                        ps.setShort(parameter.index, (short) parameter.value);
-                        break;
-                    case INTEGER:
-                        ps.setInt(parameter.index, (int) parameter.value);
-                        break;
-                    case BIGINT:
-                        ps.setLong(parameter.index, (long) parameter.value);
-                        break;
-                    case FLOAT:
-                        ps.setFloat(parameter.index, (float) parameter.value);
-                        break;
-                    case DOUBLE:
-                        ps.setDouble(parameter.index, (double) parameter.value);
-                        break;
-                    case VARCHAR:
-                        ps.setString(parameter.index, (String) parameter.value);
-                        break;
-                    case DATE:
-                        ps.setDate(parameter.index, (Date) parameter.value);
-                        break;
-                    case TIME:
-                        ps.setTime(parameter.index, (Time) parameter.value);
-                        break;
-                    case TIME_WITH_TIMEZONE: {
-                        final TimeWithTimeZone value = (TimeWithTimeZone) parameter.value;
-                        ps.setTime(parameter.index, value.time, value.calendar);
-                        break;
-                    }
-                    case TIMESTAMP:
-                        ps.setTimestamp(parameter.index, (Timestamp) parameter.value);
-                        break;
-                    case TIMESTAMP_WITH_TIMEZONE: {
-                        final TimestampWithTimeZone value = (TimestampWithTimeZone) parameter.value;
-                        ps.setTimestamp(parameter.index, value.timestamp, value.calendar);
-                        break;
-                    }
-                    case BOOLEAN:
-                        ps.setBoolean(parameter.index, (boolean) parameter.value);
-                        break;
-                    default:
-                        throw new IllegalArgumentException("Unknown type '" + parameter.type + "'");
+                    case TINYINT -> ps.setByte(parameter.index, (byte) parameter.value);
+                    case SMALLINT -> ps.setShort(parameter.index, (short) parameter.value);
+                    case INTEGER -> ps.setInt(parameter.index, (int) parameter.value);
+                    case BIGINT -> ps.setLong(parameter.index, (long) parameter.value);
+                    case FLOAT -> ps.setFloat(parameter.index, (float) parameter.value);
+                    case DOUBLE -> ps.setDouble(parameter.index, (double) parameter.value);
+                    case VARCHAR -> ps.setString(parameter.index, (String) parameter.value);
+                    case DATE -> ps.setDate(parameter.index, (Date) parameter.value);
+                    case TIME -> ps.setTime(parameter.index, (Time) parameter.value);
+                    case TIME_WITH_TIMEZONE -> ps.setTime(parameter.index, ((TimeWithTimeZone) parameter.value).time, ((TimeWithTimeZone) parameter.value).calendar);
+                    case TIMESTAMP -> ps.setTimestamp(parameter.index, (Timestamp) parameter.value);
+                    case TIMESTAMP_WITH_TIMEZONE -> ps.setTimestamp(parameter.index, ((TimestampWithTimeZone) parameter.value).timestamp, ((TimestampWithTimeZone) parameter.value).calendar);
+                    case BOOLEAN -> ps.setBoolean(parameter.index, (boolean) parameter.value);
+                    default -> throw new IllegalArgumentException("Unknown type '" + parameter.type + "'");
                 }
             }
         }
