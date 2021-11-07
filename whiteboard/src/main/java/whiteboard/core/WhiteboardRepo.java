@@ -1,4 +1,4 @@
-package whiteboard;
+package whiteboard.core;
 
 public interface WhiteboardRepo {
     Whiteboard findById(Long id);

@@ -1,10 +1,6 @@
-package whiteboard.tests;
+package whiteboard.core;
 
 import org.junit.jupiter.api.Test;
-import whiteboard.CreateWhiteboardObserver;
-import whiteboard.FakeWhiteboardRepo;
-import whiteboard.UseCases;
-import whiteboard.ValidationError;
 
 import java.util.List;
 

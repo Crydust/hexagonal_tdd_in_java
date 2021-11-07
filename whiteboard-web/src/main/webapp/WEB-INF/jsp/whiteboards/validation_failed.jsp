@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="x" tagdir="/WEB-INF/tags/whiteboards" %>
-<jsp:useBean id="errors" scope="request" type="java.util.List<whiteboard.ValidationError>"/>
+<jsp:useBean id="errors" scope="request" type="java.util.List<whiteboard.core.ValidationError>"/>
 <jsp:useBean id="name" scope="request" type="java.lang.String"/>
 <!DOCTYPE html>
 <html>

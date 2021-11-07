@@ -1,6 +1,6 @@
 package whiteboard.servlets;
 
-import whiteboard.WhiteboardRepo;
+import whiteboard.core.WhiteboardRepo;
 import whiteboard.persistence.JdbcWhiteboardRepo;
 
 final class Configuration {

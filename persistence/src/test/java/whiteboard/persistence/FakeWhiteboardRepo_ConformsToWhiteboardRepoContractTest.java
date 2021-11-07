@@ -1,6 +1,6 @@
 package whiteboard.persistence;
 
-import whiteboard.FakeWhiteboardRepo;
+import whiteboard.core.FakeWhiteboardRepo;
 
 public class FakeWhiteboardRepo_ConformsToWhiteboardRepoContractTest extends WhiteboardRepoContract {
     @Override

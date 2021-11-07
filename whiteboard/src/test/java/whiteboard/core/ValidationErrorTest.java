@@ -1,7 +1,7 @@
-package whiteboard.tests;
+package whiteboard.core;
 
 import org.junit.jupiter.api.Test;
-import whiteboard.ValidationError;
+import whiteboard.core.ValidationError;
 
 import java.util.ArrayList;
 

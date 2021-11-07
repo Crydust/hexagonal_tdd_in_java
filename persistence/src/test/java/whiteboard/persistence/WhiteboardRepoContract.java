@@ -4,8 +4,8 @@ import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import whiteboard.Whiteboard;
-import whiteboard.WhiteboardRepo;
+import whiteboard.core.Whiteboard;
+import whiteboard.core.WhiteboardRepo;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;

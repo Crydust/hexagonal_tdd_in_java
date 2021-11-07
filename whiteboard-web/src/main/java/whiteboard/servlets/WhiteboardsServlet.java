@@ -5,9 +5,9 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import whiteboard.CreateWhiteboardObserver;
-import whiteboard.UseCases;
-import whiteboard.ValidationError;
+import whiteboard.core.CreateWhiteboardObserver;
+import whiteboard.core.UseCases;
+import whiteboard.core.ValidationError;
 
 import java.util.List;
 import java.util.Map;

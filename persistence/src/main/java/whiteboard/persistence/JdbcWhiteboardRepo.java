@@ -3,8 +3,8 @@ package whiteboard.persistence;
 import org.h2.jdbcx.JdbcDataSource;
 import whiteboard.util.persistence.Repository.GeneratedKey;
 import whiteboard.util.persistence.SqlWithParameters;
-import whiteboard.Whiteboard;
-import whiteboard.WhiteboardRepo;
+import whiteboard.core.Whiteboard;
+import whiteboard.core.WhiteboardRepo;
 
 import javax.sql.DataSource;
 import java.sql.Connection;

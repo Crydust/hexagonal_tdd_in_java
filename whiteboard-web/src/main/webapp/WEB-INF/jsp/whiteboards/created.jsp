@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="x" tagdir="/WEB-INF/tags/whiteboards" %>
-<jsp:useBean id="whiteboard" scope="request" type="whiteboard.Whiteboard"/>
+<jsp:useBean id="whiteboard" scope="request" type="whiteboard.core.Whiteboard"/>
 <!DOCTYPE html>
 <html>
 <head>

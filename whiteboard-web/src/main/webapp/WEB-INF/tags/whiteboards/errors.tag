@@ -2,7 +2,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-<%@ attribute name="errors" required="true" type="java.util.List<whiteboard.ValidationError>" %>
+<%@ attribute name="errors" required="true" type="java.util.List<whiteboard.core.ValidationError>" %>
 <%@ tag body-content="empty" %>
 
 <fmt:setBundle basename="messages" scope="request"/>
