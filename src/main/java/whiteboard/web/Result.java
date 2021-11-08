@@ -2,7 +2,7 @@ package whiteboard.web;
 
 import java.util.function.Consumer;
 
-public final class Result<S, F> {
+final class Result<S, F> {
     private final S success;
     private final F failure;
     private final boolean isSuccess;

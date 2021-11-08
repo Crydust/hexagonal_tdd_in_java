@@ -9,16 +9,13 @@ import static whiteboard.web.util.NihStringUtil.addAttributeToQuery;
 
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import whiteboard.core.CreateWhiteboardObserver;
 import whiteboard.core.UseCases;
-import whiteboard.core.ValidationError;
 
 @WebServlet(name = "WhiteboardsServlet", urlPatterns = {
     WhiteboardsServlet.NEW_URL,
@@ -78,24 +75,6 @@ public class WhiteboardsServlet extends HttpServlet {
             throw e;
         } catch (Exception e) {
             throw new ServletException(e);
-        }
-    }
-
-    private static final class Gui implements CreateWhiteboardObserver {
-        private Result<Long, List<ValidationError>> result = Result.fail(List.of());
-
-        @Override
-        public void validationFailed(List<ValidationError> errors) {
-            result = Result.fail(errors);
-        }
-
-        @Override
-        public void whiteboardCreated(Long id) {
-            result = Result.success(id);
-        }
-
-        public void then(Consumer<Long> successConsumer, Consumer<List<ValidationError>> failureConsumer) {
-            result.then(successConsumer, failureConsumer);
         }
     }
 
