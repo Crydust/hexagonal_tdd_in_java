@@ -1,4 +1,4 @@
-package whiteboard.servlets;
+package whiteboard.web;
 
 import whiteboard.core.WhiteboardRepo;
 import whiteboard.persistence.JdbcWhiteboardRepo;

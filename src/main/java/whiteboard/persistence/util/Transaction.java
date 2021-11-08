@@ -1,10 +1,11 @@
-package whiteboard.util.persistence;
+package whiteboard.persistence.util;
 
-import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.function.Consumer;
+
+import javax.sql.DataSource;
 
 public class Transaction implements Runnable {
     private final DataSource ds;

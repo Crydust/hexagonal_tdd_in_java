@@ -1,12 +1,12 @@
-package whiteboard.util.web;
+package whiteboard.web.util;
+
+import java.io.IOException;
 
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
-
-import java.io.IOException;
 
 /**
  * Sets request CharacterEncoding to UTF-8 so parameters sent with POST are read

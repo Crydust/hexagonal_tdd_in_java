@@ -1,4 +1,4 @@
-package whiteboard.util.persistence;
+package whiteboard.persistence.util;
 
 import java.sql.Connection;
 import java.sql.SQLException;

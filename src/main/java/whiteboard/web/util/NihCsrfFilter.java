@@ -1,4 +1,10 @@
-package whiteboard.util.web;
+package whiteboard.web.util;
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.Base64;
+import java.util.UUID;
+import java.util.logging.Logger;
 
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
@@ -9,12 +15,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpServletResponseWrapper;
 import jakarta.servlet.http.HttpSession;
-
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.Base64;
-import java.util.UUID;
-import java.util.logging.Logger;
 
 /**
  * Adds a CSRFToken to all urls encoded with encodeURL or encodeRedirectURL. In

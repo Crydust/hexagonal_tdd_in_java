@@ -1,4 +1,15 @@
-package whiteboard.servlets;
+package whiteboard.web;
+
+import static java.util.Collections.list;
+import static whiteboard.web.Configuration.WHITEBOARD_REPO;
+import static whiteboard.web.util.NihServletUtil.readRedirectAttributes;
+import static whiteboard.web.util.NihServletUtil.redirect;
+import static whiteboard.web.util.NihServletUtil.renderJsp;
+import static whiteboard.web.util.NihStringUtil.addAttributeToQuery;
+
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -8,17 +19,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import whiteboard.core.CreateWhiteboardObserver;
 import whiteboard.core.UseCases;
 import whiteboard.core.ValidationError;
-
-import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
-
-import static java.util.Collections.list;
-import static whiteboard.servlets.Configuration.WHITEBOARD_REPO;
-import static whiteboard.util.web.NihServletUtil.readRedirectAttributes;
-import static whiteboard.util.web.NihServletUtil.redirect;
-import static whiteboard.util.web.NihServletUtil.renderJsp;
-import static whiteboard.util.web.NihStringUtil.addAttributeToQuery;
 
 @WebServlet(name = "WhiteboardsServlet", urlPatterns = {
     WhiteboardsServlet.NEW_URL,

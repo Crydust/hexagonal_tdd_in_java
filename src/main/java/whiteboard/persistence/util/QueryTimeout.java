@@ -1,4 +1,4 @@
-package whiteboard.util.persistence;
+package whiteboard.persistence.util;
 
 record QueryTimeout(int seconds) {
     public static final QueryTimeout DEFAULT_QUERY_TIMEOUT = new QueryTimeout(5);

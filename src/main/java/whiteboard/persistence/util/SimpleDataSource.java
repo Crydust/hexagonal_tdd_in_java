@@ -1,6 +1,5 @@
-package whiteboard.util.persistence;
+package whiteboard.persistence.util;
 
-import javax.sql.DataSource;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -9,6 +8,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.logging.Logger;
+
+import javax.sql.DataSource;
 
 /**
  * Creates a single connection and only closes it when you close this

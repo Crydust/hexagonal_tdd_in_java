@@ -1,4 +1,4 @@
-package whiteboard.util.persistence;
+package whiteboard.persistence.util;
 
 record FetchSize(int rows) {
     public static final FetchSize DEFAULT_FETCH_SIZE = new FetchSize(0);

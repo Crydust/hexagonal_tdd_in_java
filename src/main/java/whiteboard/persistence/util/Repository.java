@@ -1,6 +1,7 @@
-package whiteboard.util.persistence;
+package whiteboard.persistence.util;
 
-import javax.sql.DataSource;
+import static java.util.Objects.requireNonNull;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static java.util.Objects.requireNonNull;
+import javax.sql.DataSource;
 
 public final class Repository {
 

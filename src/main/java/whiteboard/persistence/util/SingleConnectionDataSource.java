@@ -1,10 +1,11 @@
-package whiteboard.util.persistence;
+package whiteboard.persistence.util;
 
-import javax.sql.DataSource;
 import java.io.Closeable;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+
+import javax.sql.DataSource;
 
 class SingleConnectionDataSource extends DelegatingDataSource implements Closeable {
 

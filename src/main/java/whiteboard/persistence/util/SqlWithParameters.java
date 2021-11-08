@@ -1,4 +1,7 @@
-package whiteboard.util.persistence;
+package whiteboard.persistence.util;
+
+import static whiteboard.persistence.util.FetchSize.DEFAULT_FETCH_SIZE;
+import static whiteboard.persistence.util.QueryTimeout.DEFAULT_QUERY_TIMEOUT;
 
 import java.sql.Date;
 import java.sql.JDBCType;
@@ -9,9 +12,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-
-import static whiteboard.util.persistence.FetchSize.DEFAULT_FETCH_SIZE;
-import static whiteboard.util.persistence.QueryTimeout.DEFAULT_QUERY_TIMEOUT;
 
 public class SqlWithParameters implements Repository.ParameterSetter {
 

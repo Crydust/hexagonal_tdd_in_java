@@ -1,9 +1,9 @@
-package whiteboard.util.web;
-
-import java.net.URLEncoder;
+package whiteboard.web.util;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Objects.requireNonNull;
+
+import java.net.URLEncoder;
 
 public final class NihStringUtil {
 

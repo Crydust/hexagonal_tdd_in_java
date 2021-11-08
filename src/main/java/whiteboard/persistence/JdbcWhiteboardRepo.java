@@ -1,12 +1,8 @@
 package whiteboard.persistence;
 
-import org.h2.jdbcx.JdbcDataSource;
-import whiteboard.util.persistence.Repository.GeneratedKey;
-import whiteboard.util.persistence.SqlWithParameters;
-import whiteboard.core.Whiteboard;
-import whiteboard.core.WhiteboardRepo;
+import static whiteboard.persistence.util.Repository.executeUpdate;
+import static whiteboard.persistence.util.Repository.sqlToOptional;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,8 +12,14 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
-import static whiteboard.util.persistence.Repository.executeUpdate;
-import static whiteboard.util.persistence.Repository.sqlToOptional;
+import javax.sql.DataSource;
+
+import org.h2.jdbcx.JdbcDataSource;
+
+import whiteboard.core.Whiteboard;
+import whiteboard.core.WhiteboardRepo;
+import whiteboard.persistence.util.Repository.GeneratedKey;
+import whiteboard.persistence.util.SqlWithParameters;
 
 public class JdbcWhiteboardRepo implements WhiteboardRepo {
 

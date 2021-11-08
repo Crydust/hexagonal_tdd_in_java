@@ -1,4 +1,4 @@
-package whiteboard.servlets;
+package whiteboard.web;
 
 import java.util.function.Consumer;
 
