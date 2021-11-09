@@ -13,8 +13,8 @@ public final class NihStringUtil {
 
     /**
      * Escapes all characters in a String into html entities.
-     * <p>
-     * You should probably use commons-text
+     *
+     * <p>You should probably use commons-text
      * <a href="https://commons.apache.org/proper/commons-text/javadocs/api-release/org/apache/commons/text/StringEscapeUtils.html">
      * StringEscapeUtils</a> instead.
      *

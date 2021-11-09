@@ -9,7 +9,7 @@ import javax.sql.DataSource;
 
 class SingleConnectionDataSource extends DelegatingDataSource implements Closeable {
 
-    private volatile UncloseableConnection connection = null;
+    private volatile UncloseableConnection connection;
 
     SingleConnectionDataSource(DataSource ds) {
         super(ds);

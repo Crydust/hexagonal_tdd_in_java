@@ -65,7 +65,7 @@ public class NihCsrfFilter implements Filter {
         chain.doFilter(request, response);
     }
 
-    private static class NihServletResponse extends HttpServletResponseWrapper {
+    private static final class NihServletResponse extends HttpServletResponseWrapper {
 
         private final String token;
 

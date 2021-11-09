@@ -2,7 +2,12 @@ package whiteboard.core;
 
 import java.util.ArrayList;
 
-public class UseCases {
+public final class UseCases {
+
+    private UseCases() {
+        // NOOP
+    }
+
     public static void createWhiteboard(String name, CreateWhiteboardObserver gui, WhiteboardRepo repo) {
         new CreateWhiteboardUseCase(name, gui, repo).execute();
     }
@@ -14,13 +19,13 @@ public class UseCases {
         private final ArrayList<ValidationError> errors = new ArrayList<>();
         private Whiteboard whiteboard;
 
-        public CreateWhiteboardUseCase(String name, CreateWhiteboardObserver gui, WhiteboardRepo repo) {
+        CreateWhiteboardUseCase(String name, CreateWhiteboardObserver gui, WhiteboardRepo repo) {
             this.name = name;
             this.gui = gui;
             this.repo = repo;
         }
 
-        public void execute() {
+        void execute() {
             if (nameTaken()) {
                 reportError("name", "unique");
             } else if (nameNotProvided()) {

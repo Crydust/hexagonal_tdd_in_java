@@ -24,7 +24,7 @@ class SimpleDataSource implements DataSource, Closeable {
     private final String password;
     private UncloseableConnection connection;
 
-    public SimpleDataSource(String connectionUrl, String username, String password) {
+    SimpleDataSource(String connectionUrl, String username, String password) {
         this.connectionUrl = connectionUrl;
         this.username = username;
         this.password = password;

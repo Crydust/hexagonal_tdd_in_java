@@ -28,13 +28,13 @@ public final class Repository {
         requireNonNull(sql, "sql");
         requireNonNull(resultSetMapper, "resultSetMapper");
         final List<T> list = new ArrayList<>();
-        try (final Connection con = ds.getConnection()) {
+        try (Connection con = ds.getConnection()) {
             con.setReadOnly(true);
-            try (final PreparedStatement ps = con.prepareStatement(sql.getSql())) {
+            try (PreparedStatement ps = con.prepareStatement(sql.getSql())) {
                 ps.setQueryTimeout(sql.getQueryTimeout());
                 ps.setFetchSize(sql.getFetchSize());
                 sql.accept(ps);
-                try (final ResultSet rs = ps.executeQuery()) {
+                try (ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
                         list.add(resultSetMapper.map(rs));
                     }
@@ -53,9 +53,9 @@ public final class Repository {
     public static int executeUpdate(DataSource ds, SqlWithParameters sql, GeneratedKey generatedKey) throws RepositoryException {
         requireNonNull(ds, "ds");
         requireNonNull(sql, "sql");
-        try (final Connection con = ds.getConnection()) {
+        try (Connection con = ds.getConnection()) {
             con.setReadOnly(false);
-            try (final PreparedStatement ps = generatedKey == null
+            try (PreparedStatement ps = generatedKey == null
                 ? con.prepareStatement(sql.getSql())
                 : con.prepareStatement(sql.getSql(), generatedKey.getColumnNames())) {
                 ps.setQueryTimeout(sql.getQueryTimeout());
@@ -83,7 +83,7 @@ public final class Repository {
 
     public static class GeneratedKey {
         private final String columnName;
-        private Long columnValue = null;
+        private Long columnValue;
 
         public GeneratedKey(String columnName) {
             this.columnName = columnName;
@@ -110,7 +110,6 @@ public final class Repository {
 
     public static class RepositoryException extends RuntimeException {
         public RepositoryException() {
-            super();
         }
 
         public RepositoryException(String message) {

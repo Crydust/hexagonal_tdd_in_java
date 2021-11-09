@@ -18,8 +18,8 @@ public class Transaction implements Runnable {
 
     @Override
     public void run() {
-        try (final SingleConnectionDataSource sds = new SingleConnectionDataSource(ds);
-             final Connection con = sds.getConnection()) {
+        try (SingleConnectionDataSource sds = new SingleConnectionDataSource(ds);
+             Connection con = sds.getConnection()) {
             con.setAutoCommit(false);
             consumer.accept(sds);
             con.commit();

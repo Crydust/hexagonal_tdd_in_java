@@ -23,10 +23,10 @@ import whiteboard.persistence.util.SqlWithParameters;
 
 public class JdbcWhiteboardRepo implements WhiteboardRepo {
 
-    private static volatile boolean initialized = false;
-    private static final Semaphore initializing = new Semaphore(1, false);
-    private static final CountDownLatch initDone = new CountDownLatch(1);
-    private static final List<Migration> migrations = List.of(new CreateWhiteboardRecordTable());
+    private static volatile boolean initialized;
+    private static final Semaphore INITIALIZING = new Semaphore(1, false);
+    private static final CountDownLatch INIT_DONE = new CountDownLatch(1);
+    private static final List<Migration> MIGRATIONS = List.of(new CreateWhiteboardRecordTable());
     private final DataSource ds;
 
     public JdbcWhiteboardRepo() {
@@ -53,14 +53,14 @@ public class JdbcWhiteboardRepo implements WhiteboardRepo {
         if (!initialized) {
             synchronized (JdbcWhiteboardRepo.class) {
                 if (!initialized) {
-                    if (initializing.tryAcquire()) {
-                        for (Migration migration : migrations) {
+                    if (INITIALIZING.tryAcquire()) {
+                        for (Migration migration : MIGRATIONS) {
                             migration.perform(connection);
                         }
                         initialized = true;
-                        initDone.countDown();
+                        INIT_DONE.countDown();
                     } else {
-                        if (!initDone.await(10, TimeUnit.SECONDS)) {
+                        if (!INIT_DONE.await(10, TimeUnit.SECONDS)) {
                             throw new RuntimeException("Database init took too long");
                         }
                     }
@@ -76,7 +76,7 @@ public class JdbcWhiteboardRepo implements WhiteboardRepo {
     private static class CreateWhiteboardRecordTable implements Migration {
         @Override
         public void perform(Connection con) throws SQLException {
-            try (final Statement st = con.createStatement()) {
+            try (Statement st = con.createStatement()) {
                 st.setQueryTimeout(10);
                 st.execute("create sequence whiteboard_seq");
                 st.execute("create table whiteboard_records (id long primary key, name varchar(255) not null unique)");

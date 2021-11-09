@@ -5,7 +5,7 @@ import java.sql.SQLException;
 
 class UncloseableConnection extends DelegatingConnection {
 
-    public UncloseableConnection(Connection con) {
+    UncloseableConnection(Connection con) {
         super(con);
     }
 
