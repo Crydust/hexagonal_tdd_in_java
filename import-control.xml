@@ -1,0 +1,22 @@
+<!DOCTYPE import-control PUBLIC
+    "-//Checkstyle//DTD ImportControl Configuration 1.4//EN"
+    "https://checkstyle.org/dtds/import_control_1_4.dtd">
+<import-control pkg="whiteboard">
+    <allow pkg="java.io"/>
+    <allow pkg="java.nio"/>
+    <allow pkg="java.util"/>
+    <subpackage name="persistence">
+        <allow pkg="whiteboard.core"/>
+        <allow pkg="whiteboard.persistence"/>
+        <allow pkg="java.sql"/>
+        <allow pkg="javax.sql"/>
+        <allow pkg="org.h2"/>
+    </subpackage>
+    <subpackage name="web">
+        <allow pkg="whiteboard.core"/>
+        <allow pkg="whiteboard.persistence"/>
+        <allow pkg="whiteboard.web"/>
+        <allow pkg="jakarta.servlet"/>
+        <allow pkg="java.net"/>
+    </subpackage>
+</import-control>
