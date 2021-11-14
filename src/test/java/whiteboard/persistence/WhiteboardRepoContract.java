@@ -1,7 +1,9 @@
 package whiteboard.persistence;
 
 import org.hamcrest.MatcherAssert;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import whiteboard.core.Whiteboard;
@@ -15,21 +17,23 @@ import static org.hamcrest.Matchers.notNullValue;
 abstract class WhiteboardRepoContract {
     final Whiteboard ny = new Whiteboard("NY", null);
     final Whiteboard sf = new Whiteboard("SF", null);
-    protected WhiteboardRepo repo;
+    WhiteboardRepo repo;
 
     @BeforeEach
-    void before() {
-        createRepo();
+    void before() throws Exception {
+        repo = createRepo();
+        repo.initialize();
         repo.save(ny);
         repo.save(sf);
     }
 
     @AfterEach
-    void tearDown() {
+    void tearDown() throws Exception {
         repo.deleteAll();
+        repo.dispose();
     }
 
-    protected abstract void createRepo();
+    protected abstract WhiteboardRepo createRepo();
 
     @Test
     void findsById() {

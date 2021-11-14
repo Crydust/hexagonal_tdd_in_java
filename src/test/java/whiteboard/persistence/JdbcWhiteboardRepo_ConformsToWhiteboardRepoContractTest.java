@@ -1,8 +1,10 @@
 package whiteboard.persistence;
 
+import whiteboard.core.WhiteboardRepo;
+
 public class JdbcWhiteboardRepo_ConformsToWhiteboardRepoContractTest extends WhiteboardRepoContract {
     @Override
-    protected void createRepo() {
-        repo = new JdbcWhiteboardRepo();
+    protected WhiteboardRepo createRepo() {
+        return new JdbcWhiteboardRepo();
     }
 }

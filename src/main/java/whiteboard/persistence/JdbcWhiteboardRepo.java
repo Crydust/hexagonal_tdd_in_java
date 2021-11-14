@@ -1,87 +1,42 @@
 package whiteboard.persistence;
 
-import static whiteboard.persistence.util.Repository.executeUpdate;
-import static whiteboard.persistence.util.Repository.sqlToOptional;
-
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
-
-import javax.sql.DataSource;
-
-import org.h2.jdbcx.JdbcDataSource;
-
+import org.h2.jdbcx.JdbcConnectionPool;
 import whiteboard.core.Whiteboard;
 import whiteboard.core.WhiteboardRepo;
 import whiteboard.persistence.util.Repository.GeneratedKey;
 import whiteboard.persistence.util.SqlWithParameters;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import static whiteboard.persistence.util.Repository.executeUpdate;
+import static whiteboard.persistence.util.Repository.sqlToOptional;
+
 public class JdbcWhiteboardRepo implements WhiteboardRepo {
 
-    private static volatile boolean initialized;
-    private static final Semaphore INITIALIZING = new Semaphore(1, false);
-    private static final CountDownLatch INIT_DONE = new CountDownLatch(1);
-    private static final List<Migration> MIGRATIONS = List.of(new CreateWhiteboardRecordTable());
-    private final DataSource ds;
+    private static final List<Migration> MIGRATIONS = List.of(new CreateWhiteboardRecordTableMigration());
+    private static final AtomicBoolean MIGRATIONS_DONE = new AtomicBoolean();
+    private JdbcConnectionPool ds = null;
 
-    public JdbcWhiteboardRepo() {
-        this.ds = createDataSource("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
-    }
-
-    private static DataSource createDataSource(String url) {
-        // TODO use connection pool
-        // TODO connection string should be configurable
-        try {
-            JdbcDataSource ds = new JdbcDataSource();
-            ds.setURL(url);
-            initializeDatabase(ds.getConnection());
-            return ds;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static void initializeDatabase(Connection connection) throws SQLException, InterruptedException {
-        if (!initialized) {
-            synchronized (JdbcWhiteboardRepo.class) {
-                if (!initialized) {
-                    if (INITIALIZING.tryAcquire()) {
-                        for (Migration migration : MIGRATIONS) {
-                            migration.perform(connection);
-                        }
-                        initialized = true;
-                        INIT_DONE.countDown();
-                    } else {
-                        if (!INIT_DONE.await(10, TimeUnit.SECONDS)) {
-                            throw new RuntimeException("Database init took too long");
-                        }
-                    }
+    @Override
+    public void initialize() throws Exception {
+        ds = JdbcConnectionPool.create("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1", "", "");
+        if (!MIGRATIONS_DONE.get()) {
+            try (Connection connection = ds.getConnection()) {
+                for (Migration migration : MIGRATIONS) {
+                    migration.perform(connection);
                 }
             }
+            MIGRATIONS_DONE.set(true);
         }
     }
 
-    private interface Migration {
-        void perform(Connection con) throws SQLException;
-    }
-
-    private static class CreateWhiteboardRecordTable implements Migration {
-        @Override
-        public void perform(Connection con) throws SQLException {
-            try (Statement st = con.createStatement()) {
-                st.setQueryTimeout(10);
-                st.execute("create sequence whiteboard_seq");
-                st.execute("create table whiteboard_records (id long primary key, name varchar(255) not null unique)");
-            }
-        }
+    @Override
+    public void dispose() throws Exception {
+        ds.dispose();
     }
 
     @Override
