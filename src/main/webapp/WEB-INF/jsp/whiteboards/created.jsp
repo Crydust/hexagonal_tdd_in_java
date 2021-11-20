@@ -12,12 +12,7 @@
 </head>
 <body>
 <h1>Created whiteboard</h1>
-<dl>
-    <dt>Id</dt>
-    <dd>${fn:escapeXml(whiteboard.id)}</dd>
-    <dt>Name</dt>
-    <dd>${fn:escapeXml(whiteboard.name)}</dd>
-</dl>
+<x:view whiteboard="${whiteboard}"/>
 
 <x:navigation/>
 </body>
