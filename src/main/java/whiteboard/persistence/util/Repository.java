@@ -23,7 +23,7 @@ public final class Repository {
         return list.isEmpty() ? Optional.empty() : Optional.ofNullable(list.get(0));
     }
 
-    private static <T> List<T> sqlToList(DataSource ds, SqlWithParameters sql, ResultSetMapper<T> resultSetMapper) throws RepositoryException {
+    public static <T> List<T> sqlToList(DataSource ds, SqlWithParameters sql, ResultSetMapper<T> resultSetMapper) throws RepositoryException {
         requireNonNull(ds, "ds");
         requireNonNull(sql, "sql");
         requireNonNull(resultSetMapper, "resultSetMapper");

@@ -9,8 +9,10 @@ import org.junit.jupiter.api.Test;
 import whiteboard.core.Whiteboard;
 import whiteboard.core.WhiteboardRepo;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 
@@ -37,21 +39,26 @@ abstract class WhiteboardRepoContract {
 
     @Test
     void findsById() {
-        MatcherAssert.assertThat(ny, is(repo.findById(ny.getId())));
-        MatcherAssert.assertThat(sf, is(repo.findById(sf.getId())));
+        assertThat(repo.findById(ny.getId()), is(ny));
+        assertThat(repo.findById(sf.getId()), is(sf));
     }
 
     @Test
     void findsByName() {
-        MatcherAssert.assertThat(ny, is(repo.findByName(ny.getName())));
-        MatcherAssert.assertThat(sf, is(repo.findByName(sf.getName())));
+        assertThat(repo.findByName(ny.getName()), is(ny));
+        assertThat(repo.findByName(sf.getName()), is(sf));
+    }
+
+    @Test
+    void findsAll() {
+        assertThat(repo.findAll(), contains(ny, sf));
     }
 
     @Test
     void createsUniqueId() {
-        MatcherAssert.assertThat(ny.getId(), notNullValue());
-        MatcherAssert.assertThat(sf.getId(), notNullValue());
-        MatcherAssert.assertThat(ny.getId(), not(equalTo(sf.getId())));
+        assertThat(ny.getId(), notNullValue());
+        assertThat(sf.getId(), notNullValue());
+        assertThat(ny.getId(), not(equalTo(sf.getId())));
     }
 }
 

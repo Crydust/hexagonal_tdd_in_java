@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static whiteboard.persistence.util.Repository.executeUpdate;
+import static whiteboard.persistence.util.Repository.sqlToList;
 import static whiteboard.persistence.util.Repository.sqlToOptional;
 
 public class JdbcWhiteboardRepo implements WhiteboardRepo {
@@ -35,7 +36,7 @@ public class JdbcWhiteboardRepo implements WhiteboardRepo {
     }
 
     @Override
-    public void dispose() throws Exception {
+    public void dispose() {
         ds.dispose();
     }
 
@@ -63,6 +64,14 @@ public class JdbcWhiteboardRepo implements WhiteboardRepo {
                 .setString(1, name),
             JdbcWhiteboardRepo::map
         ).orElse(null);
+    }
+
+    @Override
+    public List<Whiteboard> findAll() {
+        return sqlToList(ds,
+            new SqlWithParameters("select id, name from whiteboard_records order by name"),
+            JdbcWhiteboardRepo::map
+        );
     }
 
     private static Whiteboard map(ResultSet rs) throws SQLException {

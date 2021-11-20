@@ -1,7 +1,10 @@
 package whiteboard.core;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
+
+import static java.util.Comparator.comparing;
 
 public class FakeWhiteboardRepo implements WhiteboardRepo {
     private final ArrayList<Whiteboard> whiteboards = new ArrayList<>();
@@ -21,6 +24,13 @@ public class FakeWhiteboardRepo implements WhiteboardRepo {
             .filter(w -> w.getName().equals(name))
             .findFirst()
             .orElse(null);
+    }
+
+    @Override
+    public List<Whiteboard> findAll() {
+        return whiteboards.stream()
+            .sorted(comparing(Whiteboard::getName))
+            .toList();
     }
 
     @Override

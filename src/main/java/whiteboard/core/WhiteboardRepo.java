@@ -1,5 +1,7 @@
 package whiteboard.core;
 
+import java.util.List;
+
 public interface WhiteboardRepo {
     default void initialize() throws Exception {
     }
@@ -10,6 +12,8 @@ public interface WhiteboardRepo {
     Whiteboard findById(Long id);
 
     Whiteboard findByName(String name);
+
+    List<Whiteboard> findAll();
 
     void save(Whiteboard whiteboard);
 
