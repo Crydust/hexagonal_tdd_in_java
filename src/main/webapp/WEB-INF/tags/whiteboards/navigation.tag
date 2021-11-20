@@ -9,4 +9,6 @@
     <x:navigation-link href="/">Home</x:navigation-link>
     |
     <x:navigation-link href="/whiteboards/new">New whiteboard</x:navigation-link>
+    |
+    <x:navigation-link href="/whiteboards/list">All whiteboards</x:navigation-link>
     ]</p>

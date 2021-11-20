@@ -1,15 +1,5 @@
 package whiteboard.web;
 
-import static java.util.Collections.list;
-import static whiteboard.web.Configuration.WHITEBOARD_REPO;
-import static whiteboard.web.util.NihServletUtil.readRedirectAttributes;
-import static whiteboard.web.util.NihServletUtil.redirect;
-import static whiteboard.web.util.NihServletUtil.renderJsp;
-import static whiteboard.web.util.NihStringUtil.addAttributeToQuery;
-
-import java.util.List;
-import java.util.Map;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -17,10 +7,21 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import whiteboard.core.UseCases;
 
+import java.util.List;
+import java.util.Map;
+
+import static java.util.Collections.list;
+import static whiteboard.web.Configuration.WHITEBOARD_REPO;
+import static whiteboard.web.util.NihServletUtil.readRedirectAttributes;
+import static whiteboard.web.util.NihServletUtil.redirect;
+import static whiteboard.web.util.NihServletUtil.renderJsp;
+import static whiteboard.web.util.NihStringUtil.addAttributeToQuery;
+
 @WebServlet(name = "WhiteboardsServlet", urlPatterns = {
     WhiteboardsServlet.NEW_URL,
     WhiteboardsServlet.CREATE_URL,
     WhiteboardsServlet.CREATED_URL,
+    WhiteboardsServlet.LIST_URL,
     WhiteboardsServlet.VALIDATION_FAILED_URL
 })
 public class WhiteboardsServlet extends HttpServlet {
@@ -28,11 +29,13 @@ public class WhiteboardsServlet extends HttpServlet {
     public static final String NEW_URL = "/whiteboards/new";
     public static final String CREATE_URL = "/whiteboards/create";
     public static final String CREATED_URL = "/whiteboards/created";
+    public static final String LIST_URL = "/whiteboards/list";
     public static final String VALIDATION_FAILED_URL = "/whiteboards/validation_failed";
 
     private static final String NEW_JSP = "/WEB-INF/jsp/whiteboards/new.jsp";
     private static final String VALIDATION_FAILED_JSP = "/WEB-INF/jsp/whiteboards/validation_failed.jsp";
     private static final String CREATED_JSP = "/WEB-INF/jsp/whiteboards/created.jsp";
+    private static final String LIST_JSP = "/WEB-INF/jsp/whiteboards/list.jsp";
     private static final String EXPIRED_JSP = "/WEB-INF/jsp/expired.jsp";
 
     @Override
@@ -68,6 +71,9 @@ public class WhiteboardsServlet extends HttpServlet {
                 }
                 case CREATED_URL -> renderJsp(request, response, CREATED_JSP, Map.of(
                     "whiteboard", WHITEBOARD_REPO.findById(Long.valueOf(request.getParameter("id")))
+                ));
+                case LIST_URL -> renderJsp(request, response, LIST_JSP, Map.of(
+                    "whiteboards", WHITEBOARD_REPO.findAll()
                 ));
                 default -> throw new ServletException("Unknown ServletPath '" + request.getServletPath() + "'");
             }
